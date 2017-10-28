@@ -34,6 +34,7 @@ class App extends Component {
 
         this.onDelete = this.onDelete.bind(this);
         this.onSearch = this.onSearch.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     onDelete(itemKey){
@@ -45,12 +46,22 @@ class App extends Component {
         this.setState({
             searchTerm: event.target.value
         });
+
+    }
+
+    onSubmit (event){
+        this.setState({
+            searchTerm: this.state.searchTerm.toUpperCase()
+        });
+
+        event.preventDefault();
     }
 
 
 
     render() {
-        const listItems = this.state.list.filter(isSearched(this.state.searchTerm)).map((item) => {
+        const {searchTerm, list} = this.state;
+        const listItems = list.filter(isSearched(searchTerm)).map((item) => {
             return <li key={item.objectID}>
                     <div>{item.title} &nbsp; &nbsp;
                         <span><button onClick={() => this.onDelete(item.objectID)} >X</button></span>
@@ -61,8 +72,8 @@ class App extends Component {
         return (
             <div>
                 <div>
-                    <form>
-                        <input type="text" name="search" onChange={this.onSearch}></input>
+                    <form onSubmit={this.onSubmit}>
+                        <input type="text" name="search" onChange={this.onSearch} value={searchTerm}></input>
                     </form>
                 </div>
                 <ul>
