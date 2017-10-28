@@ -66,8 +66,9 @@ class App extends Component {
             <div>
                 <Search value={searchTerm}
                         onChange={this.onSearch}
-                        onSubmit={this.onSubmit}
-                />
+                        onSubmit={this.onSubmit}>
+                    Search
+                </Search>
                 <List list={list}
                       pattern={searchTerm}
                       onDelete={this.onDelete}
@@ -84,6 +85,7 @@ class Search extends Component {
         return (
             <div>
                 <form onSubmit={onSubmit}>
+                    {this.props.children}: &nbsp;
                     <input type="text"
                            name="search"
                            onChange={onChange}
