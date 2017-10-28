@@ -108,9 +108,11 @@ class List extends Component {
                 <li key={item.objectID}>
                     <div>{item.title} &nbsp; &nbsp;
                         <span>
-                            <button
-                                onClick={() => onDelete(item.objectID)} >X
-                            </button>
+                            <Button
+                                onClick={() => onDelete(item.objectID)}
+                            >
+                                X
+                            </Button>
                         </span>
                     </div>
                 </li>
@@ -123,6 +125,24 @@ class List extends Component {
             </ul>
         );
     };
+}
+
+class Button extends Component {
+    render() {
+        const {
+            onClick,
+            children,
+        } = this.props;
+
+        return (
+            <button
+                onClick={onClick}
+                type="button"
+            >
+                {children}
+            </button>
+        );
+    }
 }
 
 export default App;
