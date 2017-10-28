@@ -1,41 +1,31 @@
 import React, { Component } from 'react';
 import './App.css';
 
-const list = [
-    {
-        title: 'React',
-        url: 'https://facebook.github.io/react/',
-        author: 'Jordan Walke',
-        num_comments: 3,
-        points: 4,
-        objectID: 0,
-    },
-    {
-        title: 'Vuejs',
-        url: 'https://vuejs.com',
-        author: 'Dan Abramov, Andrew Clark',
-        num_comments: 2,
-        points: 5,
-        objectID: 1,
-    },
-];
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+const DEFAULT_QUERY = 'redux';
+
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 
 const isSearched = (searchTerm) => (item) => item.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
 
 
 class App extends Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
 
         this.state = {
-            list: list,
-            searchTerm: ''
+            result: null,
+            searchTerm: DEFAULT_QUERY
         }
 
         this.onDelete = this.onDelete.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.setStories = this.setStories.bind(this);
+        this.fetchStories = this.fetchStories.bind(this);
     }
 
     onDelete(itemKey){
@@ -57,10 +47,23 @@ class App extends Component {
         event.preventDefault();
     }
 
+    setStories(stories){
+        this.setState({ result: stories});
+    }
+
+    fetchStories(){
+        fetch(url).
+        then(response => response.json()).
+        then(result => this.setStories(result)).
+        catch(e => e);
+    }
+
 
 
     render() {
-        const {searchTerm, list} = this.state;
+        const {searchTerm, result} = this.state;
+
+        if(! result) { return null; }
 
         return (
             <div className="page">
@@ -73,12 +76,16 @@ class App extends Component {
                     </Search>
                 </div>
 
-                <Table list={list}
+                <Table list={result.hits}
                        pattern={searchTerm}
                        onDelete={this.onDelete}
                 />
             </div>
         );
+    }
+
+    componentDidMount(){
+        this.fetchStories();
     }
 }
 
