@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './App.css';
 
 const list = [
     {
@@ -46,7 +47,6 @@ class App extends Component {
         this.setState({
             searchTerm: event.target.value
         });
-
     }
 
     onSubmit (event){
@@ -63,15 +63,19 @@ class App extends Component {
         const {searchTerm, list} = this.state;
 
         return (
-            <div>
-                <Search value={searchTerm}
-                        onChange={this.onSearch}
-                        onSubmit={this.onSubmit}>
-                    Search
-                </Search>
-                <List list={list}
-                      pattern={searchTerm}
-                      onDelete={this.onDelete}
+            <div className="page">
+
+                <div className="interactions">
+                    <Search value={searchTerm}
+                            onChange={this.onSearch}
+                            onSubmit={this.onSubmit}>
+                        Search
+                    </Search>
+                </div>
+
+                <Table list={list}
+                       pattern={searchTerm}
+                       onDelete={this.onDelete}
                 />
             </div>
         );
@@ -92,39 +96,55 @@ function Search (props) {
                 />
             </form>
         </div>
-
     );
 }
 
 
-function List ({list, pattern, onDelete}){
+function Table ({list, pattern, onDelete}){
+
+    const largeColumn = {
+        width: '40%'
+    }
+    const midColumn = {
+        width: '30%'
+    }
+    const smallColumn = {
+        width: '10%'
+    }
+
     const listItem = list.filter(isSearched(pattern)).map((item) => {
         return (
-            <li key={item.objectID}>
-                <div>{item.title} &nbsp; &nbsp;
-                    <span>
-                        <Button
-                            onClick={() => onDelete(item.objectID)}
-                        >
-                            X
-                        </Button>
-                    </span>
-                </div>
-            </li>
+            <div key={item.objectID} className="table-row">
+                <span style={largeColumn}>
+                    <a href={item.url}> {item.title} </a>
+                </span>
+                <span style={midColumn}>{item.author}</span>
+                <span style={smallColumn}>{item.num_comments}</span>
+                <span style={smallColumn}>{item.points}</span>
+                <span style={smallColumn}>
+                    <Button
+                        onClick={() => onDelete(item.objectID)}
+                        className="button-inline"
+                    >
+                        Delete
+                    </Button>
+                </span>
+            </div>
         );
     });
 
     return (
-        <ul>
+        <div className="table">
             {listItem}
-        </ul>
+        </div>
     );
 }
 
-function Button ( {onClick, children }) {
+function Button ( {onClick, children, className =''}) {
     return (
         <button
             onClick={onClick}
+            className={className}
             type="button"
         >
             {children}
