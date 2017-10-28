@@ -78,71 +78,58 @@ class App extends Component {
     }
 }
 
-class Search extends Component {
-    render() {
-        const{onSubmit, onChange, value} = this.props;
+function Search (props) {
+    const{onSubmit, onChange, value, children} = props;
 
-        return (
-            <div>
-                <form onSubmit={onSubmit}>
-                    {this.props.children}: &nbsp;
-                    <input type="text"
-                           name="search"
-                           onChange={onChange}
-                           value={value}
-                    />
-                </form>
-            </div>
+    return (
+        <div>
+            <form onSubmit={onSubmit}>
+                {children}: &nbsp;
+                <input type="text"
+                       name="search"
+                       onChange={onChange}
+                       value={value}
+                />
+            </form>
+        </div>
 
-        );
-    };
+    );
 }
 
 
-class List extends Component {
-    render() {
-        const {list, pattern, onDelete} = this.props;
-
-        const listItem = list.filter(isSearched(pattern)).map((item) => {
-            return (
-                <li key={item.objectID}>
-                    <div>{item.title} &nbsp; &nbsp;
-                        <span>
-                            <Button
-                                onClick={() => onDelete(item.objectID)}
-                            >
-                                X
-                            </Button>
-                        </span>
-                    </div>
-                </li>
-            );
-        });
-
+function List ({list, pattern, onDelete}){
+    const listItem = list.filter(isSearched(pattern)).map((item) => {
         return (
-            <ul>
-                {listItem}
-            </ul>
+            <li key={item.objectID}>
+                <div>{item.title} &nbsp; &nbsp;
+                    <span>
+                        <Button
+                            onClick={() => onDelete(item.objectID)}
+                        >
+                            X
+                        </Button>
+                    </span>
+                </div>
+            </li>
         );
-    };
+    });
+
+    return (
+        <ul>
+            {listItem}
+        </ul>
+    );
 }
 
-class Button extends Component {
-    render() {
-        const {
-            onClick,
-            children,
-        } = this.props;
-
-        return (
-            <button
-                onClick={onClick}
-                type="button"
-            >
-                {children}
-            </button>
-        );
-    }
+function Button ( {onClick, children }) {
+    return (
+        <button
+            onClick={onClick}
+            type="button"
+        >
+            {children}
+        </button>
+    );
 }
 
 export default App;
