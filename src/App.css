@@ -52,3 +52,26 @@
     border-radius: 0;
     border-bottom: 1px solid #38BB6C;
 }
+
+.loader {
+    position: absolute;
+    left: 45%;
+    top: 20%;
+    border: 7px solid rgba(197, 200, 200, 0.93); /* Light grey */
+    border-top: 7px solid #1edb0a; /* Blue */
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    animation: spin 0.5s linear infinite;
+}
+
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

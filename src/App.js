@@ -4,12 +4,8 @@ import './App.css';
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
-const DEFAULT_QUERY = 'redux';
-
-const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
-
-const isSearched = (searchTerm) => (item) => item.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
-
+const PARAM_PAGE = 'page=';
+const DEFAULT_QUERY = '22';
 
 class App extends Component {
 
@@ -18,7 +14,9 @@ class App extends Component {
 
         this.state = {
             result: null,
-            searchTerm: DEFAULT_QUERY
+            currentPage: 0,
+            searchTerm: DEFAULT_QUERY,
+            loading: false
         }
 
         this.onDelete = this.onDelete.bind(this);
@@ -26,44 +24,59 @@ class App extends Component {
         this.onSubmit = this.onSubmit.bind(this);
         this.setStories = this.setStories.bind(this);
         this.fetchStories = this.fetchStories.bind(this);
+        this.onFetchNextPage = this.onFetchNextPage.bind(this);
     }
 
     onDelete(itemKey){
-        const updatedList = this.state.list.filter((item) => item.objectID !== itemKey);
-        this.setState({list: updatedList});
+        const updatedList = this.state.result.hits.filter((item) => item.objectID !== itemKey);
+        this.setState({
+            result: Object.assign({}, this.state.result, {hits: updatedList})
+        });
     }
 
     onSearch(event){
         this.setState({
-            searchTerm: event.target.value
-        });
+            searchTerm: event.target.value,
+            currentPage: 0,
+            loading: true
+        }, this.fetchStories);
     }
 
     onSubmit (event){
         this.setState({
-            searchTerm: this.state.searchTerm.toUpperCase()
-        });
+            currentPage: 0,
+            loading: true
+        }, this.fetchStories);
 
         event.preventDefault();
     }
 
     setStories(stories){
-        this.setState({ result: stories});
+        this.setState({
+            result: stories,
+            loading: false
+        });
     }
 
     fetchStories(){
-        fetch(url).
-        then(response => response.json()).
-        then(result => this.setStories(result)).
-        catch(e => e);
+        fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${this.state.searchTerm}&${PARAM_PAGE}${this.state.currentPage}`)
+            .then(response => response.json())
+            .then(result => this.setStories(result))
+            .catch(e => e);
     }
 
-
+    onFetchNextPage () {
+        this.setState({
+            currentPage: this.state.currentPage + 1,
+            loading: true
+        }, this.fetchStories);
+    }
 
     render() {
-        const {searchTerm, result} = this.state;
+        const {searchTerm, result, loading} = this.state;
 
-        if(! result) { return null; }
+        const hideStyle = { display: 'none' };
+        const showStyle = { display: 'block' };
 
         return (
             <div className="page">
@@ -71,15 +84,25 @@ class App extends Component {
                 <div className="interactions">
                     <Search value={searchTerm}
                             onChange={this.onSearch}
-                            onSubmit={this.onSubmit}>
+                            onSubmit={this.onSubmit}
+                            onNextPage={this.onFetchNextPage}>
                         Search
                     </Search>
                 </div>
 
-                <Table list={result.hits}
-                       pattern={searchTerm}
-                       onDelete={this.onDelete}
-                />
+                <div className={loading ? "loader" : ""}>
+                </div>
+                {
+                    result && result.hits && result.hits.length > 0
+                        ? <Table  style={loading ? hideStyle : showStyle}
+                                  list={result.hits}
+                                  onDelete={this.onDelete} />
+
+                        : <div style={{ textAlign: 'center', margin:'auto' }}>
+                            <p>No Results Found</p>
+                          </div>
+                }
+
             </div>
         );
     }
@@ -90,7 +113,7 @@ class App extends Component {
 }
 
 function Search (props) {
-    const{onSubmit, onChange, value, children} = props;
+    const{onSubmit, onChange, value, onNextPage, children} = props;
 
     return (
         <div>
@@ -101,13 +124,18 @@ function Search (props) {
                        onChange={onChange}
                        value={value}
                 />
+                <button type="submit">
+                    {children}
+                </button>
+                <Button onClick={onNextPage}>
+                    Next Page
+                </Button>
             </form>
         </div>
     );
 }
 
-
-function Table ({list, pattern, onDelete}){
+function Table ({list, onDelete}){
 
     const largeColumn = {
         width: '40%'
@@ -119,7 +147,7 @@ function Table ({list, pattern, onDelete}){
         width: '10%'
     }
 
-    const listItem = list.filter(isSearched(pattern)).map((item) => {
+    const listItem = list.map((item) => {
         return (
             <div key={item.objectID} className="table-row">
                 <span style={largeColumn}>
