@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import Search from '../search';
+import Table from '../table';
+
+
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
@@ -114,81 +118,6 @@ class App extends Component {
     componentDidMount(){
         this.fetchStories();
     }
-}
-
-function Search (props) {
-    const{onSubmit, onChange, value, onNextPage, children} = props;
-
-    return (
-        <div>
-            <form onSubmit={onSubmit}>
-                {children}: &nbsp;
-                <input type="text"
-                       name="search"
-                       onChange={onChange}
-                       value={value}
-                />
-                <button type="submit">
-                    {children}
-                </button>
-                <Button onClick={onNextPage}>
-                    Next Page
-                </Button>
-            </form>
-        </div>
-    );
-}
-
-function Table ({list, onDelete}){
-
-    const largeColumn = {
-        width: '40%'
-    }
-    const midColumn = {
-        width: '30%'
-    }
-    const smallColumn = {
-        width: '10%'
-    }
-
-    const listItem = list.map((item) => {
-        return (
-            <div key={item.objectID} className="table-row">
-                <span style={largeColumn}>
-                    <a href={item.url}> {item.title} </a>
-                </span>
-                <span style={midColumn}>{item.author}</span>
-                <span style={smallColumn}>{item.num_comments}</span>
-                <span style={smallColumn}>{item.points}</span>
-                <span style={smallColumn}>
-                    <Button
-                        onClick={() => onDelete(item.objectID)}
-                        className="button-inline"
-                    >
-                        Delete
-                    </Button>
-                </span>
-            </div>
-        );
-    });
-
-    return (
-        <div className="table">
-            {listItem}
-        </div>
-    );
-}
-
-function Button ( {onClick, children, className =''}) {
-    return (
-        <button
-            onClick={onClick}
-            className={className}
-            type="button"
-        >
-            {children}
-        </button>
-    );
 }
 
 export default App;
