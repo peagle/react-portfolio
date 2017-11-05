@@ -16,7 +16,8 @@ class App extends Component {
             result: null,
             currentPage: 0,
             searchTerm: DEFAULT_QUERY,
-            loading: false
+            loading: true,
+            error: null
         }
 
         this.onDelete = this.onDelete.bind(this);
@@ -62,7 +63,7 @@ class App extends Component {
         fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${this.state.searchTerm}&${PARAM_PAGE}${this.state.currentPage}`)
             .then(response => response.json())
             .then(result => this.setStories(result))
-            .catch(e => e);
+            .catch(e => {this.setState({ error: e.toString(), loading: false})});
     }
 
     onFetchNextPage () {
@@ -73,7 +74,7 @@ class App extends Component {
     }
 
     render() {
-        const {searchTerm, result, loading} = this.state;
+        const {searchTerm, result, loading, error} = this.state;
 
         const hideStyle = { display: 'none' };
         const showStyle = { display: 'block' };
@@ -90,17 +91,19 @@ class App extends Component {
                     </Search>
                 </div>
 
-                <div className={loading ? "loader" : ""}>
-                </div>
                 {
-                    result && result.hits && result.hits.length > 0
-                        ? <Table  style={loading ? hideStyle : showStyle}
+                    loading
+                    ? <div className="loader"></div>
+                    : error
+                        ? <div className="interactions">Sorry something went wrong: {error}</div>
+                        : result && result.hits && result.hits.length > 0
+                            ? <Table  style={loading ? hideStyle : showStyle}
                                   list={result.hits}
                                   onDelete={this.onDelete} />
 
-                        : <div style={{ textAlign: 'center', margin:'auto' }}>
-                            <p>No Results Found</p>
-                          </div>
+                            : <div style={{ textAlign: 'center', margin:'auto' }}>
+                                <p>No Results Found</p>
+                              </div>
                 }
 
             </div>
