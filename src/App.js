@@ -80,6 +80,7 @@ class App extends Component {
         const showStyle = { display: 'block' };
 
         return (
+
             <div className="page">
 
                 <div className="interactions">
