@@ -21,7 +21,7 @@ class App extends Component {
             result: null,
             currentPage: 0,
             searchTerm: DEFAULT_QUERY,
-            loading: true,
+            isLoading: true,
             error: null
         }
 
@@ -44,14 +44,14 @@ class App extends Component {
         this.setState({
             searchTerm: event.target.value,
             currentPage: 0,
-            loading: true
+            isLoading: true
         }, this.fetchStories);
     }
 
     onSubmit (event){
         this.setState({
             currentPage: 0,
-            loading: true
+            isLoading: true
         }, this.fetchStories);
 
         event.preventDefault();
@@ -60,7 +60,7 @@ class App extends Component {
     setStories(stories){
         this.setState({
             result: stories,
-            loading: false
+            isLoading: false
         });
     }
 
@@ -68,18 +68,18 @@ class App extends Component {
         fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${this.state.searchTerm}&${PARAM_PAGE}${this.state.currentPage}`)
             .then(response => response.json())
             .then(result => this.setStories(result))
-            .catch(e => {this.setState({ error: e.toString(), loading: false})});
+            .catch(e => {this.setState({ error: e.toString(), isLoading: false})});
     }
 
     onFetchNextPage () {
         this.setState({
             currentPage: this.state.currentPage + 1,
-            loading: true
+            isLoading: true
         }, this.fetchStories);
     }
 
     render() {
-        const {searchTerm, result, loading, error} = this.state;
+        const {searchTerm, result, isLoading, error} = this.state;
 
         const hideStyle = { display: 'none' };
         const showStyle = { display: 'block' };
@@ -92,18 +92,19 @@ class App extends Component {
                     <Search value={searchTerm}
                             onChange={this.onSearch}
                             onSubmit={this.onSubmit}
-                            onNextPage={this.onFetchNextPage}>
+                            onNextPage={this.onFetchNextPage}
+                            isLoading={this.state.isLoading}>
                         Search
                     </Search>
                 </div>
 
                 {
-                    loading
+                    isLoading
                     ? <div className="loader"></div>
                     : error
                         ? <div className="interactions">Sorry something went wrong: {error}</div>
                         : result && result.hits && result.hits.length > 0
-                            ? <Table  style={loading ? hideStyle : showStyle}
+                            ? <Table  style={isLoading ? hideStyle : showStyle}
                                   list={result.hits}
                                   onDelete={this.onDelete} />
 

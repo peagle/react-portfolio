@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Button ( {onClick, children, className =''}) {
+function Button ( {onClick, children, className =''} ) {
     return (
         <button
             onClick={onClick}
@@ -12,4 +12,17 @@ function Button ( {onClick, children, className =''}) {
     );
 }
 
-export default Button;
+const Loading = () => <button>loading...</button>;
+
+
+const withLoading = (Component) => ({isLoading, ...rest}) => {
+    return isLoading
+        ? <Loading />
+        : <Component {...rest} />
+}
+
+const ButtonWithLoading = withLoading(Button);
+
+export {Button, ButtonWithLoading};
+
+

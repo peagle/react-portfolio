@@ -1,15 +1,12 @@
 import React, {Component} from 'react';
 
-import Button from '../button';
+import {ButtonWithLoading} from '../button';
 
 class Search extends Component {
-    constructor(props){
-        super(props);
-        this.state = props;
-    }
 
     render(){
-        const{onSubmit, onChange, value, onNextPage, children} = this.state;
+        const{onSubmit, onChange, value, onNextPage, isLoading, children} = this.props;
+
         let input;
         return (
             <div>
@@ -24,9 +21,10 @@ class Search extends Component {
                     <button type="submit">
                         {children}
                     </button>
-                    <Button onClick={onNextPage}>
+                    <ButtonWithLoading onClick={onNextPage}
+                            isLoading={isLoading}>
                         Next Page
-                    </Button>
+                    </ButtonWithLoading>
                 </form>
             </div>
         );
