@@ -5,7 +5,6 @@ import fetch from 'isomorphic-fetch';
 import Search from '../search';
 import Table from '../table';
 
-
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
@@ -23,21 +22,14 @@ class App extends Component {
             searchTerm: DEFAULT_QUERY,
             isLoading: true,
             error: null
-        }
+        };
 
-        this.onDelete = this.onDelete.bind(this);
+
         this.onSearch = this.onSearch.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.setStories = this.setStories.bind(this);
         this.fetchStories = this.fetchStories.bind(this);
         this.onFetchNextPage = this.onFetchNextPage.bind(this);
-    }
-
-    onDelete(itemKey){
-        const updatedList = this.state.result.hits.filter((item) => item.objectID !== itemKey);
-        this.setState({
-            result: Object.assign({}, this.state.result, {hits: updatedList})
-        });
     }
 
     onSearch(event){
@@ -105,9 +97,8 @@ class App extends Component {
                         ? <div className="interactions">Sorry something went wrong: {error}</div>
                         : result && result.hits && result.hits.length > 0
                             ? <Table  style={isLoading ? hideStyle : showStyle}
-                                  list={result.hits}
-                                  onDelete={this.onDelete} />
-
+                                      list={result.hits}
+                              />
                             : <div style={{ textAlign: 'center', margin:'auto' }}>
                                 <p>No Results Found</p>
                               </div>
