@@ -31,7 +31,7 @@ class Search extends Component {
     }
 
     componentDidMount(){
-        this.input.focus();
+       // this.input.focus();
     }
 }
 

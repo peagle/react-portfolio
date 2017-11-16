@@ -10,7 +10,7 @@
 .table-header {
     display: flex;
     line-height: 24px;
-    font-size: 16px;
+    font-size: 14px;
     padding: 0 10px;
     justify-content: space-between;
 }
@@ -50,7 +50,7 @@
 }
 .button-active {
     border-radius: 0;
-    border-bottom: 1px solid #38BB6C;
+    border-bottom: 2px solid #bb000e;
 }
 
 .loader {
